@@ -5,5 +5,5 @@ services:
     build:
       context: ../../
       dockerfile: ./docker/buildkite/Dockerfile
-    command: "./gradlew -q execute -PmainClass=io.temporal.samples.complex.Worker"
+    command: "./gradlew -q execute -PmainClass=io.temporal.samples.hello.HelloActivity"
 
