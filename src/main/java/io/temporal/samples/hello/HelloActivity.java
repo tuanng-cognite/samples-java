@@ -31,6 +31,7 @@ import io.temporal.workflow.Workflow;
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Hello World Temporal workflow that executes a single activity. Requires a local instance the
@@ -65,7 +66,7 @@ public class HelloActivity {
     private final GreetingActivities activities =
         Workflow.newActivityStub(
             GreetingActivities.class,
-            ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(2)).build());
+            ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(60)).build());
 
     @Override
     public String getGreeting(String name) {
@@ -77,6 +78,11 @@ public class HelloActivity {
   static class GreetingActivitiesImpl implements GreetingActivities {
     @Override
     public String composeGreeting(String greeting, String name) {
+      try {
+        TimeUnit.SECONDS.sleep(2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
       return greeting + " " + name + "!";
     }
   }

@@ -42,13 +42,13 @@ public class HelloStarter {
     long start = System.currentTimeMillis();
     ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(30);
     CountDownLatch latch = new CountDownLatch(1000);
+    WorkflowOptions workflowOptions = WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build();
+    System.out.println(workflowOptions);
     for (int i = 0; i < 1000; i++) {
       executor.submit(
           () -> {
             HelloActivity.GreetingWorkflow workflow =
-                client.newWorkflowStub(
-                    HelloActivity.GreetingWorkflow.class,
-                    WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build());
+                client.newWorkflowStub(HelloActivity.GreetingWorkflow.class, workflowOptions);
             // Execute a workflow waiting for it to complete. See {@link
             // io.temporal.samples.hello.HelloSignal}
             // for an example of starting workflow without waiting synchronously for its result.
