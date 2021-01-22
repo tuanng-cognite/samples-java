@@ -40,7 +40,7 @@ public class HelloStarter {
     WorkflowClient client = WorkflowClient.newInstance(service);
 
     long start = System.currentTimeMillis();
-    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(30);
+    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
     CountDownLatch latch = new CountDownLatch(1000);
     WorkflowOptions workflowOptions = WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build();
     System.out.println(workflowOptions);

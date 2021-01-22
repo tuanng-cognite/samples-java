@@ -83,6 +83,7 @@ public class HelloActivity {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
+      System.out.println(Thread.currentThread().getId());
       return greeting + " " + name + "!";
     }
   }
@@ -91,7 +92,9 @@ public class HelloActivity {
     // gRPC stubs wrapper that talks to the local docker instance of temporal service.
     WorkflowServiceStubs service =
         WorkflowServiceStubs.newInstance(
-            WorkflowServiceStubsOptions.newBuilder().setTarget("192.168.0.3:7233").build());
+            WorkflowServiceStubsOptions.newBuilder()
+                .setTarget("temporaltest-frontend:7233")
+                .build());
     // client that can be used to start and signal workflows
     WorkflowClient client = WorkflowClient.newInstance(service);
 
