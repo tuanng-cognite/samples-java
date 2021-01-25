@@ -66,7 +66,7 @@ public class HelloActivity {
     private final GreetingActivities activities =
         Workflow.newActivityStub(
             GreetingActivities.class,
-            ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(60)).build());
+            ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofMinutes(5)).build());
 
     @Override
     public String getGreeting(String name) {

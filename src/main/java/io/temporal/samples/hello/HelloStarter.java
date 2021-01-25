@@ -24,9 +24,11 @@ import static io.temporal.samples.hello.HelloActivity.TASK_QUEUE;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
-import java.util.concurrent.CountDownLatch;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
+import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Hello World Temporal workflow that executes a single activity. Requires a local instance the
@@ -36,13 +38,25 @@ public class HelloStarter {
 
   public static void main(String[] args) throws InterruptedException {
 
-    WorkflowServiceStubs service = WorkflowServiceStubs.newInstance();
+    WorkflowServiceStubs service =
+        WorkflowServiceStubs.newInstance(
+            WorkflowServiceStubsOptions.newBuilder()
+                .setRpcTimeout(Duration.ofMinutes(5))
+                .setQueryRpcTimeout(Duration.ofMinutes(5))
+                .setRpcLongPollTimeout(Duration.ofMinutes(5))
+                .setTarget("temporaltest-frontend:7233")
+                .build());
     WorkflowClient client = WorkflowClient.newInstance(service);
 
     long start = System.currentTimeMillis();
     ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
-    CountDownLatch latch = new CountDownLatch(1000);
-    WorkflowOptions workflowOptions = WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build();
+    WorkflowOptions workflowOptions =
+        WorkflowOptions.newBuilder()
+            .setTaskQueue(TASK_QUEUE)
+            .setWorkflowTaskTimeout(Duration.ofMinutes(5))
+            .setWorkflowRunTimeout(Duration.ofMinutes(5))
+            .setWorkflowExecutionTimeout(Duration.ofMinutes(5))
+            .build();
     System.out.println(workflowOptions);
     for (int i = 0; i < 1000; i++) {
       executor.submit(
@@ -54,11 +68,11 @@ public class HelloStarter {
             // for an example of starting workflow without waiting synchronously for its result.
             String greeting = workflow.getGreeting("World");
             System.out.println(greeting);
-            latch.countDown();
           });
     }
 
-    latch.await();
+    executor.shutdown();
+    executor.awaitTermination(5, TimeUnit.MINUTES);
     System.out.println("time = " + (System.currentTimeMillis() - start));
     System.exit(0);
   }
